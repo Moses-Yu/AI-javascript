@@ -32,7 +32,7 @@ function draw() {
   i+=xMove;
 }
 
-function mousePressed() {
+function jump() {
   jumpforce = 5;
   downforce = 0.5;
 }
@@ -40,7 +40,7 @@ function mousePressed() {
 function character() {
   rect(v.x, v.y, 50, 50);
   if(AI[i] == true)
-    mousePressed();
+    jump();
   
   if (jumpforce > 0.5) {
     v.set(v.x + xMove, v.y - jumpforce);
@@ -91,7 +91,7 @@ function obstacles() {
 function resetPos(){
   xScreen = 0;
   v.set(100, 0);
-  mousePressed();
+  jump();
   tries++;
   AIprogram();
 }

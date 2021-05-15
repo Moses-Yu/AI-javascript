@@ -7,7 +7,7 @@ let xScreen = xMove;
 let tries = 0;
 let hit = false;
 
-let AI = [];
+
 
 
 function setup() {
@@ -39,8 +39,6 @@ function mousePressed() {
 
 function character() {
   rect(v.x, v.y, 50, 50);
-  if(AI[i] == true)
-    mousePressed();
   
   if (jumpforce > 0.5) {
     v.set(v.x + xMove, v.y - jumpforce);
@@ -93,20 +91,7 @@ function resetPos(){
   v.set(100, 0);
   mousePressed();
   tries++;
-  AIprogram();
-}
-
-function AIprogram(){
-  if(lastF == i){
-    AI[i-3] = false;
-    AI[i-(30*(adjust-2))] = false;
-    AI[i-30*adjust] = true;
-    adjust++;
-  }else{
-    AI[i-3] = true;
-    lastF = i;
-    adjust = 1;
-  }
-  
+  lastF = i;
   i = 100;
 }
+
