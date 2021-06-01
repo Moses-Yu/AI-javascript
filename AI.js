@@ -8,9 +8,11 @@ let tries = 0;
 let hit = false;
 let hitOnBottom = false;
 let AI = [];
-
+let l = 0;
 let col1, col2, col3;
 let col = [];
+
+let s = "";
 function setup() {
   let cvs = createCanvas(1200, 800).center('horizontal');
   cvs.mousePressed(pause);
@@ -44,6 +46,17 @@ function draw() {
     fill(255);
     textSize(100);
     text("Paused",300+xScreen,400);
+
+      for(l=100;l<3000;){
+      if(AI[l]==true)
+        s = s + "1";
+      else
+        s = s + "0"
+      l = l+3;
+    }
+    console.log(s);
+    s = "";
+
     noLoop();
   }
 
@@ -75,9 +88,20 @@ function ending(){
     fill(255);
     textSize(100);
     text("END",3000,400);
+    
+    for(l=100;l<3000;){
+      if(AI[l]==true)
+        s = s + "1";
+      else
+        s = s + "0"
+      l = l+3;
+    }
+    console.log(s);
+
     noLoop();
   }
 }
+
 
 function jump() {
   jumpforce = 5;
