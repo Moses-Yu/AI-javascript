@@ -1,32 +1,3 @@
-<!DOCTYPE html>
-<html lang="">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI version</title>
-  <style type="text/css" >@import url("/canvas.css");</style>
-  <style>
-  body {
-    padding: 0;
-    margin: 0;
-
-  }
-</style>
-<script src="p5/p5.js"></script>
-<script src="p5/p5.collide2d.js"></script>
-<script src="AI.js"></script>
-<!-- <script src="../addons/p5.sound.js"></script> -->
-</head>
-
-<body>
-  <div style="position: absolute; top: 100px; left: 50px;">Click game to pause.</div>
-  <div style="position: absolute; top: 770px; Left: 200px;">AI learning status -></div>
-  <div style="position: absolute; top: 200px; left: 50px;" onclick="document.getElementById('code').style.display = 'block';">Click to see javascript code</div>
-  
-  <div id="code" style="position: absolute; top: 900px; left: 200px; display: none;">
-    <div >Used libraries: p5.js, p5.collide2D</div>
-    <pre style="background-color: #aaaaaa; padding: 50px;">
 let v, i, iy, lastF, lastY, adjust = 0;
 let jumpforce = 6;
 let downforce = 0.5;
@@ -35,13 +6,15 @@ let xMove = 3;
 let xScreen = xMove;
 let tries = 0;
 let hit = false;
-let hitOnBottom = false;
 let AI = [];
-
+let l = 0;
 let col1, col2, col3;
 let col = [];
+
+let s = "";
 function setup() {
-  createCanvas(1200, 800).center('horizontal');
+  let cvs = createCanvas(1200, 800).center('horizontal');
+  cvs.mousePressed(pause);
   frameRate(100);
   v = createVector(100, 400);
   i = 100;
@@ -53,14 +26,17 @@ function setup() {
   character();
 }
 
-function draw() {
+function draw() {  
+  
+  if(paused == true){
+    noLoop();
+  }
   background(0);
-
   translate(0 - xScreen, 0);
 
   ending();
-  character();
   obstacles();
+  character();
   fill(255);
   textSize(12);
   text("number of tries: "+ tries, 0+xScreen, 400);
@@ -71,25 +47,24 @@ function draw() {
   for(iy = 100;iy<3000;iy+=3){
     if(AI[iy] == true){
       fill(0, 128, 0);
-      rect(iy,780,3,3);
+      rect(iy,780,3,10);
     }else{
       fill(255);
-      rect(iy,780,3,3);
+      rect(iy,780,3,10);
     }
   }
-
   i+=xMove;
 }
 
-let pause = false;
-function mousePressed(){
-  if(pause == false){
-    noLoop();
-    pause = true;
+let paused = false;
+function pause(){
+  if(paused == false){
+    paused = true;
   }else{
+    paused = false;
+    resetPos();
     loop();
-    pause = false;
-  }
+  } 
 }
 
 function ending(){
@@ -97,6 +72,16 @@ function ending(){
     fill(255);
     textSize(100);
     text("END",3000,400);
+    s = "";
+    for(l=100;l<3000;){
+      if(AI[l]==true)
+        s = s + "1, ";
+      else
+        s = s + "0, "
+      l = l+3;
+    }
+    console.log(s);
+    s = "";
     noLoop();
   }
 }
@@ -123,19 +108,62 @@ function character() {
     v.set(v.x + xMove, v.y + downforce);
   }
 
-  if (floor(v.y) > 610) {
-    hitOnBottom = true;
-    AIprogram();
-  }
+  hitOnBottomCheck();
+
   if (floor(v.y) > 800) {
     resetPos();
-
   }
   xScreen += xMove;
-
 }
 
-
+var changeAI = 0;
+function hitOnBottomCheck(){
+// 70 190 380 220
+// 450 340 380 220
+// 830 290 380 220
+// 1210 390 380 220
+// 1590 340 380 220
+// 1970 290 380 220
+// 2350 240 380 220
+    if(changeAI < 10){
+        if(v.x > 70 && v.x < 450){
+            if(v.y > 190+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }else if(v.x > 450 && v.x < 830){
+            if(v.y > 340+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }else if(v.x > 830 && v.x < 1210){
+            if(v.y > 290+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }else if(v.x > 1210 && v.x < 1590){
+            if(v.y > 390+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }else if(v.x > 1590 && v.x < 1970){
+            if(v.y > 340+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }else if(v.x > 1970 && v.x < 2350){
+            if(v.y > 290+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }else if(v.x > 2350 && v.x < 2350+380){
+            if(v.y > 340+220-30){
+                AI[i] = true;
+                changeAI++;
+            }
+        }
+    }
+}
 
 function resetPos(){
   lastY = floor(v.y);
@@ -147,32 +175,28 @@ function resetPos(){
   col1 = random(0,255);
   col2 = random(0,255);
   col3 = random(0,255);
+  changeAI = 0;
 }
-
 
 var lastJump = 0;
 function AIprogram(){
 
-  if(hitOnBottom == true){
-    AI[i - 6] = true;
-    hitOnBottom = false;
-  }else if(lastF == i){
+    if(lastF == i){
 
-    AI[lastJump] = false;
-    AI[i - 6*adjust - 12] = true;
-    lastJump = i - 6*adjust - 12;
-    adjust++;
+        AI[lastJump] = false;
+        AI[i - 6*adjust - 12] = true;
+        lastJump = i - 6*adjust - 12;
+        adjust++;
     
-  }else{
-    AI[i - 6] = true;
-    adjust = 0;
-    lastJump = 0;
-  }
+    }else{
+        AI[i - 6] = true;
+        adjust = 0;
+        lastJump = 0;
+    }
 
-  lastF = i;
-  i = 100;
+    lastF = i;
+    i = 100;
 }
-
 
 function obstacles() {  
 
@@ -191,10 +215,7 @@ var distObs = 380;
 var btwObs = 220;
 var totalHeight = 800;
 var startObs = 300;
-
-
 function makeObs(num, between){
-
 
   fill(col1,col2,col3);
   noStroke();
@@ -209,13 +230,3 @@ function makeObs(num, between){
   if(hit)
     resetPos();
 }
-  </pre></div>
-  <div style="position: absolute; top: 800;">
-    <script>
-    </script>
-  </div>
-  <main>
-  </main>
-</body>
-
-</html>
